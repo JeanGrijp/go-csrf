@@ -37,4 +37,15 @@
 //	r.Get("/csrf-token", func(w http.ResponseWriter, r *http.Request) {
 //	    p.TokenHandler().ServeHTTP(w, r)
 //	})
+//
+// Repository
+// <https://github.com/JeanGrijp/go-csrf>
+//
+// README and Examples
+//   - README: <https://github.com/JeanGrijp/go-csrf#readme>
+//   - chi:    <https://github.com/JeanGrijp/go-csrf/blob/main/examples/chi/main.go>
+//   - gin:    <https://github.com/JeanGrijp/go-csrf/blob/main/examples/gin/main.go>
+//
+// Go Reference
+// <https://pkg.go.dev/github.com/JeanGrijp/go-csrf/csrf>
 package csrf

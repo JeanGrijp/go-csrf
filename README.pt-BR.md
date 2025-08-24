@@ -26,6 +26,12 @@ Leia em: [English](README.md) • **Português (BR)**
 - API mínima: configure, aplique o middleware e (opcional) exponha um endpoint de token para SPAs
 - Defaults seguros (SameSite=Lax, entropia de 32 bytes)
 
+## Links rápidos
+
+- Repositório: https://github.com/JeanGrijp/go-csrf
+- Go Reference: https://pkg.go.dev/github.com/JeanGrijp/go-csrf/csrf
+- Exemplos: [chi](examples/chi/main.go) • [gin](examples/gin/main.go)
+
 ## Instalação
 
 Adicione o pacote ao seu módulo (o pacote está na subpasta `csrf/`):
