@@ -8,13 +8,13 @@ import (
 	"strings"
 )
 
-// Gera token aleatório url-safe
+// newToken generates a random URL-safe token.
 func newToken(n int) (string, error) {
 	b := make([]byte, n)
 	if _, err := rand.Read(b); err != nil {
 		return "", err
 	}
-	// base64 URL-encoding sem padding
+	// base64 URL-encoding without padding
 	s := base64.RawURLEncoding.EncodeToString(b)
 	return s, nil
 }
@@ -32,7 +32,7 @@ func extractClientToken(r *http.Request, headerName, formField string) string {
 	return ""
 }
 
-// Verifica se a origem informada é "same-site" do host permitido.
+// sameSite checks if originOrRef is same-site with the allowed host.
 func sameSite(originOrRef, allowedHost string) bool {
 	u, err := url.Parse(originOrRef)
 	if err != nil {

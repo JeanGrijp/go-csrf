@@ -1,3 +1,4 @@
+// Package csrf provides a lightweight double-submit-cookie CSRF protection middleware.
 package csrf
 
 import "net/http"
@@ -9,17 +10,17 @@ type Config struct {
 	CookieDomain   string
 	CookieSecure   bool
 	CookieSameSite http.SameSite
-	CookieMaxAge   int // em segundos
+	CookieMaxAge   int // in seconds
 
 	// Token transport
-	HeaderName string // ex: "X-CSRF-Token"
-	FormField  string // ex: "csrf_token"
+	HeaderName string // e.g.: "X-CSRF-Token"
+	FormField  string // e.g.: "csrf_token"
 
-	// Segurança extra
+	// Extra security
 	EnforceOriginCheck bool
-	AllowedOrigin      string // se vazio, usa r.Host
+	AllowedOrigin      string // if empty, uses r.Host
 
-	// Entropia
+	// Entropy
 	TokenBytes int
 }
 
@@ -28,7 +29,7 @@ type Protector struct {
 }
 
 func New(cfg Config) *Protector {
-	// defaults razoáveis
+	// reasonable defaults
 	if cfg.CookieName == "" {
 		cfg.CookieName = "csrf_token"
 	}
@@ -44,7 +45,7 @@ func New(cfg Config) *Protector {
 	if cfg.TokenBytes <= 0 {
 		cfg.TokenBytes = 32
 	}
-	// segurança web moderna: SameSite=Lax geralmente é o mínimo
+	// modern web security: SameSite=Lax is a good baseline
 	if cfg.CookieSameSite == 0 {
 		cfg.CookieSameSite = http.SameSiteLaxMode
 	}

@@ -12,12 +12,12 @@ func main() {
 	r := chi.NewRouter()
 
 	p := csrf.New(csrf.Config{
-		CookieSecure:       true, // em produção atrás de HTTPS
+		CookieSecure:       true, // in production behind HTTPS
 		EnforceOriginCheck: true,
-		AllowedOrigin:      "app.exemplo.com", // se vazio, usa r.Host
+		AllowedOrigin:      "app.example.com", // if empty, uses r.Host
 	})
 
-	// endpoint opcional para SPA buscar o token
+	// optional endpoint for SPA to fetch the token
 	r.Group(func(r chi.Router) {
 		r.Use(p.Protect)
 		r.Get("/csrf-token", func(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +25,7 @@ func main() {
 		})
 	})
 
-	// rotas da aplicação
+	// application routes
 	r.Group(func(r chi.Router) {
 		r.Use(p.Protect)
 
@@ -38,7 +38,7 @@ func main() {
 		})
 
 		r.Post("/transfer", func(w http.ResponseWriter, r *http.Request) {
-			// se chegou aqui, token bateu
+			// if we got here, the token was valid
 			w.WriteHeader(http.StatusCreated)
 			w.Write([]byte("ok"))
 		})
