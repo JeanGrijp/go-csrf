@@ -2,6 +2,12 @@
   <h1>go-csrf</h1>
   <p>Proteção CSRF leve (double-submit cookie) para Go.</p>
   <p>
+        <a href="https://github.com/JeanGrijp/go-csrf/actions/workflows/ci.yml">
+            <img src="https://github.com/JeanGrijp/go-csrf/actions/workflows/ci.yml/badge.svg" alt="CI">
+        </a>
+        <a href="https://codecov.io/gh/JeanGrijp/go-csrf">
+            <img src="https://codecov.io/gh/JeanGrijp/go-csrf/graph/badge.svg?token=REPLACE_TOKEN" alt="codecov">
+        </a>
     <a href="https://pkg.go.dev/github.com/JeanGrijp/go-csrf/csrf">
       <img src="https://pkg.go.dev/badge/github.com/JeanGrijp/go-csrf/csrf.svg" alt="Go Reference">
     </a>
