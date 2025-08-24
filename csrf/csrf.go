@@ -15,9 +15,20 @@ var unsafeMethods = map[string]bool{
 	http.MethodDelete: true,
 }
 
-// Protect is the main middleware.
-// - For "safe" methods: ensure the token cookie exists (generate if needed).
-// - For "unsafe" methods: validate header/body vs cookie and (optionally) Origin/Referer.
+// Protect wraps the given next http.Handler and enforces CSRF protection.
+//
+// Behavior:
+//   - For "safe" methods (GET/HEAD/OPTIONS): ensures the token cookie exists and
+//     injects the token into the request context, then calls next.
+//   - For "unsafe" methods (POST/PUT/PATCH/DELETE): optionally validates Origin/Referer
+//     (when EnforceOriginCheck is true), extracts the client token from header or form,
+//     compares it in constant time against the cookie token, and only then calls next.
+//
+// Params:
+// - next: downstream handler to be executed after CSRF checks pass.
+//
+// Returns:
+// - An http.Handler that performs the CSRF logic before delegating to next.
 func (p *Protector) Protect(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cfg := p.cfg
@@ -63,7 +74,16 @@ func (p *Protector) Protect(next http.Handler) http.Handler {
 	})
 }
 
-// Ensure the token cookie exists; if not, generate and set it.
+// ensureCookieToken checks for the CSRF token cookie on the incoming request.
+// If present and looks valid, it returns the cookie value. Otherwise, it generates
+// a new random token, sets it as a cookie on the response, and returns the value.
+//
+// Params:
+// - w: response writer used to set the cookie when needed.
+// - r: incoming request to inspect cookies from.
+//
+// Returns:
+// - token string on success; empty string and error if token generation fails.
 func (p *Protector) ensureCookieToken(w http.ResponseWriter, r *http.Request) (string, error) {
 	cfg := p.cfg
 
@@ -92,12 +112,21 @@ func (p *Protector) ensureCookieToken(w http.ResponseWriter, r *http.Request) (s
 }
 
 // TokenFromContext returns the CSRF token stored in ctx, if present.
+//
+// Params:
+// - ctx: context potentially containing a token set by the middleware.
+//
+// Returns:
+// - token (string) and a boolean indicating whether a token was found.
 func TokenFromContext(ctx context.Context) (string, bool) {
 	return tokenFromContext(ctx)
 }
 
 // TokenHandler returns an HTTP handler that writes the current CSRF token.
 // This is useful for SPAs to fetch the token and attach it to subsequent requests.
+//
+// Returns:
+// - http.Handler that responds with the token in the response body (text/plain).
 func (p *Protector) TokenHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if tok, ok := TokenFromContext(r.Context()); ok {
@@ -109,6 +138,17 @@ func (p *Protector) TokenHandler() http.Handler {
 	})
 }
 
+// validateOriginOrReferer checks whether the request is same-site according to
+// the allowed host policy. When allowed is empty, it falls back to r.Host.
+// It prefers the Origin header; if empty, it falls back to Referer.
+//
+// Params:
+//   - r: the incoming request containing Origin/Referer headers.
+//   - allowed: the allowed host (domain[:port]) to be considered same-site;
+//     if empty, r.Host is used.
+//
+// Returns:
+// - nil when origin/referrer is acceptable; otherwise an error describing the issue.
 func validateOriginOrReferer(r *http.Request, allowed string) error {
 	// if allowed is empty, use the current request host as baseline
 	host := allowed

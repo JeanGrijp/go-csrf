@@ -28,6 +28,15 @@ type Protector struct {
 	cfg Config
 }
 
+// New receives a Config (cfg) with cookie, transport and security settings,
+// applies reasonable defaults when fields are empty, and returns a configured
+// *Protector ready to be used as middleware. It never returns nil.
+//
+// Params:
+// - cfg: configuration values (cookie options, header/form names, security flags).
+//
+// Returns:
+// - *Protector with defaults applied.
 func New(cfg Config) *Protector {
 	// reasonable defaults
 	if cfg.CookieName == "" {
