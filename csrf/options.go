@@ -3,24 +3,66 @@ package csrf
 
 import "net/http"
 
+// Config holds cookie attributes, token transport options and security flags
+// used by the CSRF protector. New applies sensible defaults when fields are
+// left empty/zero.
+//
+// Notes
+//   - This middleware uses the double-submit cookie pattern, which requires the
+//     CSRF cookie to be readable by client-side code; therefore the cookie is set
+//     with HttpOnly=false by design.
+//   - Defaults applied by New when zero values are provided:
+//     CookieName="csrf_token", CookiePath="/", CookieSameSite=http.SameSiteLaxMode,
+//     HeaderName="X-CSRF-Token", FormField="csrf_token", TokenBytes=32.
 type Config struct {
-	// Cookie
-	CookieName     string
-	CookiePath     string
-	CookieDomain   string
-	CookieSecure   bool
+	// CookieName is the name of the CSRF token cookie.
+	// Default: "csrf_token".
+	CookieName string
+
+	// CookiePath is the Path attribute for the CSRF cookie.
+	// Default: "/".
+	CookiePath string
+
+	// CookieDomain is the Domain attribute for the CSRF cookie.
+	// Leave empty to omit the attribute.
+	CookieDomain string
+
+	// CookieSecure controls the Secure flag of the CSRF cookie.
+	// Should be true in production when using HTTPS.
+	CookieSecure bool
+
+	// CookieSameSite sets the SameSite attribute of the CSRF cookie.
+	// Default: http.SameSiteLaxMode.
 	CookieSameSite http.SameSite
-	CookieMaxAge   int // in seconds
 
-	// Token transport
-	HeaderName string // e.g.: "X-CSRF-Token"
-	FormField  string // e.g.: "csrf_token"
+	// CookieMaxAge is the Max-Age attribute in seconds.
+	// 0 means a session cookie (no Max-Age attribute). Negative values are not set by this package.
+	CookieMaxAge int // in seconds
 
-	// Extra security
+	// HeaderName is the HTTP header from which the client provides the token
+	// on unsafe requests.
+	// Default: "X-CSRF-Token".
+	HeaderName string
+
+	// FormField is the form field name (application/x-www-form-urlencoded or
+	// multipart/form-data) from which the client may provide the token.
+	// Default: "csrf_token".
+	FormField string
+
+	// EnforceOriginCheck, when true, validates that unsafe requests originate
+	// from the same site by checking the Origin header or, if absent, the
+	// Referer header.
 	EnforceOriginCheck bool
-	AllowedOrigin      string // if empty, uses r.Host
 
-	// Entropy
+	// AllowedOrigin is the allowed site (host) for same-site checks when
+	// EnforceOriginCheck is enabled. If empty, the current request host (r.Host)
+	// is used.
+	// Example: "app.example.com"
+	AllowedOrigin string
+
+	// TokenBytes is the number of random bytes used to generate the token
+	// before base64url encoding (no padding).
+	// Default: 32.
 	TokenBytes int
 }
 
