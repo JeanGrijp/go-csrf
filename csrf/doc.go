@@ -13,11 +13,16 @@
 // # Configuration
 //
 // All behavior is driven by Config. Key fields include:
-//   - CookieName, CookiePath, CookieDomain, CookieSecure, CookieSameSite, CookieMaxAge
+//   - CookieName, CookiePath, CookieDomain, CookieSecure, CookieHTTPOnly, CookieSameSite, CookieMaxAge
 //   - HeaderName (default: "X-CSRF-Token")
 //   - FormField (default: "csrf_token")
 //   - EnforceOriginCheck and AllowedOrigin (empty means use the request host)
 //   - TokenBytes (default: 32)
+//
+// HttpOnly note
+// By default many double-submit implementations keep HttpOnly=false so client code
+// can read the token when necessary. If you do not need client-side reads (e.g., you
+// fetch tokens via TokenHandler or inject them server-side), set CookieHTTPOnly=true.
 //
 // Typical usage
 //

@@ -151,6 +151,7 @@ Toda a configuração é feita via `csrf.Config`:
 - CookieSecure: habilite em produção com HTTPS
 - CookieSameSite: padrão `http.SameSiteLaxMode`
 - CookieMaxAge: tempo de vida em segundos
+- CookieHTTPOnly: controla o flag HttpOnly do cookie de CSRF (padrão false). Use true se você sempre buscar o token via TokenHandler ou injetá-lo server-side
 - HeaderName: header que carrega o token (padrão `X-CSRF-Token`)
 - FormField: campo de formulário que carrega o token (padrão `csrf_token`)
 - EnforceOriginCheck: quando true, valida Origin/Referer para métodos não seguros
@@ -182,7 +183,8 @@ r.Get("/csrf-token", func(w http.ResponseWriter, r *http.Request) {
 ## Notas de segurança
 
 - Sempre habilite `CookieSecure` em produção (HTTPS).
-- Double-submit requer que o token seja legível pelo JS (`HttpOnly` é propositalmente falso para o cookie de CSRF).
+- HttpOnly: por padrão o cookie de CSRF usa HttpOnly=false por compatibilidade. Se você não precisa ler o cookie no JS, prefira `CookieHTTPOnly=true` e busque o token pelo endpoint `/csrf-token` (TokenHandler) ou injete server-side.
+- Observação: CSRF não protege contra XSS. Se um invasor executa JS, ele também pode chamar o endpoint de token; HttpOnly sozinho não mitiga XSS.
 - Considere habilitar `EnforceOriginCheck` para mitigar CSRF via política de mesmo site.
 
 ## Desenvolvimento
