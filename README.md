@@ -14,20 +14,17 @@
 	</p>
 </div>
 
+Read this in: **English** • [Português (BR)](README.pt-BR.md)
+
 - Works with net/http and popular routers (chi, gin, etc.)
 - Minimal API: configure, attach middleware, optionally expose a token endpoint for SPAs
 - Safe defaults (SameSite=Lax, 32 bytes entropy)
 
-<p align="center">
-	<strong>Examples:</strong>
-	<a href="examples/chi/main.go">chi</a> •
-	<a href="examples/gin/main.go">gin</a>
-	<br />
-	<em>Run</em> — chi: <code>go run ./examples/chi</code> • gin: <code>go run ./examples/gin</code>
-  
-</p>
+**Examples:** [chi](examples/chi/main.go) • [gin](examples/gin/main.go)
 
-<h2 align="center">Install</h2>
+Run — chi: `go run ./examples/chi` • gin: `go run ./examples/gin`
+
+## Install
 
 Add the package to your module (the package lives under the `csrf/` subfolder):
 
@@ -35,7 +32,7 @@ Add the package to your module (the package lives under the `csrf/` subfolder):
 go get github.com/JeanGrijp/go-csrf/csrf@latest
 ```
 
-<h2 align="center">Quick start (chi)</h2>
+## Quick start (chi)
 
 ```go
 package main
@@ -88,7 +85,7 @@ func main() {
 }
 ```
 
-<h2 align="center">Quick start (net/http)</h2>
+## Quick start (net/http)
 
 ```go
 mux := http.NewServeMux()
@@ -100,7 +97,7 @@ protected := p.Protect(mux)
 http.ListenAndServe(":8080", protected)
 ```
 
-<h2 align="center">Quick start (gin)</h2>
+## Quick start (gin)
 
 This package is a standard `net/http` middleware. To use it in Gin, wrap it into a `gin.HandlerFunc` and forward to `c.Next()` inside the wrapped handler:
 
@@ -130,7 +127,7 @@ r.GET("/csrf-token", func(c *gin.Context) {
 })
 ```
 
-<h2 align="center">Configuration</h2>
+## Configuration
 
 All configuration happens via `csrf.Config`:
 
@@ -168,13 +165,13 @@ r.Get("/csrf-token", func(w http.ResponseWriter, r *http.Request) {
 })
 ```
 
-<h2 align="center">Security notes</h2>
+## Security notes
 
 - Always enable `CookieSecure` in production (HTTPS).
 - Double-submit requires the token to be readable by JS (`HttpOnly` is intentionally false for the CSRF cookie).
 - Consider enabling `EnforceOriginCheck` to mitigate CSRF via strict same-site policy.
 
-<h2 align="center">Development</h2>
+## Development
 
 Run the chi example:
 
@@ -188,6 +185,6 @@ Run the gin example:
 go run ./examples/gin
 ```
 
-<h2 align="center">License</h2>
+## License
 
 MIT
