@@ -96,7 +96,6 @@ func (p *Protector) ensureCookieToken(w http.ResponseWriter, r *http.Request) (s
 		return "", err
 	}
 
-	// HttpOnly = false (double-submit requires JS-readable token)
 	http.SetCookie(w, &http.Cookie{
 		Name:     cfg.CookieName,
 		Value:    tok,
@@ -105,7 +104,7 @@ func (p *Protector) ensureCookieToken(w http.ResponseWriter, r *http.Request) (s
 		MaxAge:   cfg.CookieMaxAge,
 		SameSite: cfg.CookieSameSite,
 		Secure:   cfg.CookieSecure,
-		HttpOnly: false,
+		HttpOnly: cfg.CookieHTTPOnly,
 	})
 
 	return tok, nil

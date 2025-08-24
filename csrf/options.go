@@ -31,6 +31,11 @@ type Config struct {
 	// Should be true in production when using HTTPS.
 	CookieSecure bool
 
+	// CookieHTTPOnly controls the HttpOnly flag of the CSRF cookie.
+	// Default: false (double-submit pattern commonly requires client-side read).
+	// Set to true if you always fetch the token via TokenHandler or inject it server-side.
+	CookieHTTPOnly bool
+
 	// CookieSameSite sets the SameSite attribute of the CSRF cookie.
 	// Default: http.SameSiteLaxMode.
 	CookieSameSite http.SameSite
